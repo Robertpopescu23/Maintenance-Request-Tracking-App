@@ -159,8 +159,9 @@ void main() async {
 
 **Robert Popescu**   
 **Beniamin Emanuel Imbrescu**
+
 Project: *Maintenance Request & Tracking App*
 
----
 
-*Built with ❤️ using Flutter*
+
+
