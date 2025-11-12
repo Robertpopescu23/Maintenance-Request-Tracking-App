@@ -1,11 +1,11 @@
-# 🏠 Maintenance Request & Tracking App
+# Maintenance Request & Tracking App
 
 A cross-platform Flutter application that helps tenants and property managers submit, track, and manage maintenance requests efficiently.  
 The app includes Firebase integration, local data storage, and a clean, modern UI.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Run the App
 To get started with development or testing:
@@ -21,7 +21,7 @@ flutter run
 
 ---
 
-## 📁 Project Directory Structure
+## Project Directory Structure
 
 Below is a detailed explanation of each file and folder included in this project:
 
@@ -47,7 +47,7 @@ Below is a detailed explanation of each file and folder included in this project
 
 ---
 
-## 🧱 Suggested Custom Folder Structure (Inside `lib/`)
+## Suggested Custom Folder Structure (Inside `lib/`)
 
 You can organize your `lib/` directory as follows for scalability and clarity:
 
@@ -71,7 +71,7 @@ Each folder serves a unique purpose:
 
 ---
 
-## 🔗 Planned Integrations
+## Planned Integrations
 
 | Integration | Description |
 |--------------|-------------|
@@ -81,7 +81,7 @@ Each folder serves a unique purpose:
 
 ---
 
-## 🧩 Development Roadmap
+## Development Roadmap
 
 1. **Design the UI** — build main screens and navigation flow.  
 2. **Integrate Firebase** — authentication, Firestore, and cloud functions.  
@@ -91,7 +91,7 @@ Each folder serves a unique purpose:
 
 ---
 
-## 🔥 Firebase Integration Guide
+## Firebase Integration Guide
 
 ### 1. Create a Firebase Project
 - Go to [Firebase Console](https://console.firebase.google.com/)
@@ -146,7 +146,7 @@ void main() async {
 
 ---
 
-## 📚 Helpful Resources
+## Helpful Resources
 
 - [Flutter Documentation](https://docs.flutter.dev/)
 - [Firebase Setup for Flutter](https://firebase.flutter.dev/docs/overview)
@@ -155,13 +155,9 @@ void main() async {
 
 ---
 
-## 👨‍💻 Authors
+## Authors
 
-**Robert Popescu**   
+**Robert Popescu**
 **Beniamin Emanuel Imbrescu**
 
 Project: *Maintenance Request & Tracking App*
-
-
-
-
