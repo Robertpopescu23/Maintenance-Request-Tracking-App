@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart'; // Import the new Dashboard page
+import 'dashboard.dart';
+import 'available_jobs.dart'; // Import the new page
 
 class ChooseRoleScreen extends StatefulWidget {
   const ChooseRoleScreen({Key? key}) : super(key: key);
@@ -128,7 +129,6 @@ class _ChooseRoleScreenState extends State<ChooseRoleScreen> {
                 child: ElevatedButton(
                   onPressed: selectedRole != null
                       ? () {
-                          // Navigate to dashboard if Resident is selected
                           if (selectedRole == 'resident') {
                             Navigator.push(
                               context,
@@ -136,17 +136,17 @@ class _ChooseRoleScreenState extends State<ChooseRoleScreen> {
                                 builder: (context) => const DashboardScreen(),
                               ),
                             );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Feature for Repair Professionals coming soon!',
-                                ),
+                          } else if (selectedRole == 'professional') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const AvailableJobsScreen(),
                               ),
                             );
                           }
                         }
-                      : null, // disabled until a role is selected
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
