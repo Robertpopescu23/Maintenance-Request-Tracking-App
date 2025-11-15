@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'verify_your_account.dart';
 
 class AvailableJobsScreen extends StatelessWidget {
   const AvailableJobsScreen({Key? key}) : super(key: key);
@@ -29,9 +30,11 @@ class AvailableJobsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -53,6 +56,7 @@ class AvailableJobsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   child: Column(
                     children: [
                       // Top 1/4 section (light green background)
@@ -66,6 +70,7 @@ class AvailableJobsScreen extends StatelessWidget {
                           ),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 16),
+
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: const [
@@ -89,8 +94,8 @@ class AvailableJobsScreen extends StatelessWidget {
                           itemCount: jobs.length,
                           itemBuilder: (context, index) {
                             final job = jobs[index];
-                            final bool isAvailable =
-                                index % 2 != 0; // alternate
+                            final bool isAvailable = index % 2 != 0;
+
                             return Container(
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(16),
@@ -99,6 +104,7 @@ class AvailableJobsScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(color: Colors.grey.shade300),
                               ),
+
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -106,10 +112,7 @@ class AvailableJobsScreen extends StatelessWidget {
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
                                     children: [
-                                      // Job title
                                       Expanded(
                                         child: Text(
                                           job['title']!,
@@ -120,8 +123,6 @@ class AvailableJobsScreen extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-
-                                      // Price range
                                       Text(
                                         job['price']!,
                                         style: const TextStyle(
@@ -164,6 +165,35 @@ class AvailableJobsScreen extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // GO TO VERIFICATION BUTTON
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const VerifyYourAccountScreen(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightGreen, // background
+                    foregroundColor: Colors.white, // text color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Go to Verification',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // for formatting timestamp
+import 'package:intl/intl.dart';
+import 'ticket_description.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -12,12 +13,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool showInput = false;
   final TextEditingController ticketController = TextEditingController();
 
-  // Ticket list — each ticket stores a map with "text" and "timestamp"
   final List<Map<String, String>> tickets = [];
 
   void handleAddTicket() {
     setState(() {
-      showInput = !showInput; // toggle input visibility
+      showInput = !showInput;
     });
   }
 
@@ -25,12 +25,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final text = ticketController.text.trim();
     if (text.isNotEmpty) {
       final timestamp = DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now());
+
       setState(() {
         tickets.add({'text': text, 'timestamp': timestamp});
         ticketController.clear();
         showInput = false;
       });
     }
+  }
+
+  void goToTicketDescription() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TicketDescriptionScreen(tickets: tickets),
+      ),
+    );
   }
 
   @override
@@ -41,24 +51,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
 
-              // Dashboard Title
               const Text(
                 'Dashboard',
-                style: TextStyle(
-                  fontSize: 26,
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
+                style: TextStyle(fontSize: 26, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
 
               const SizedBox(height: 30),
 
-              // My Tickets Box
+              // MAIN TICKET BOX
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -76,7 +80,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Top blue section
+                      // HEADER
                       Container(
                         height: 60,
                         decoration: const BoxDecoration(
@@ -98,38 +102,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            // White plus icon
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: IconButton(
-                                onPressed: handleAddTicket,
-                                icon: const Icon(
-                                  Icons.add,
-                                  color: Colors.blue,
-                                  size: 24,
-                                ),
-                              ),
+                            IconButton(
+                              onPressed: handleAddTicket,
+                              icon: const Icon(Icons.add, color: Colors.white),
                             ),
                           ],
                         ),
                       ),
 
-                      // Input for new ticket
+                      // INPUT FIELD
                       if (showInput)
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
                               TextField(
                                 controller: ticketController,
                                 decoration: InputDecoration(
-                                  hintText: 'Enter your ticket',
+                                  hintText: "Enter your ticket",
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -141,7 +131,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ),
                               ),
+
                               const SizedBox(height: 10),
+
                               SizedBox(
                                 width: double.infinity,
                                 height: 45,
@@ -150,21 +142,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
                                     foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
                                   ),
-                                  child: const Text(
-                                    'Submit',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                                  child: const Text("Submit"),
                                 ),
                               ),
                             ],
                           ),
                         ),
 
-                      // Ticket List
+                      // TICKET LIST DISPLAY
                       Expanded(
                         child: tickets.isEmpty
                             ? Center(
@@ -177,77 +163,76 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               )
                             : ListView.builder(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
+                                padding: const EdgeInsets.all(16),
                                 itemCount: tickets.length,
                                 itemBuilder: (context, index) {
                                   final ticket = tickets[index];
+
                                   return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 6,
-                                    ),
                                     padding: const EdgeInsets.all(12),
+                                    margin: const EdgeInsets.only(bottom: 12),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.shade100,
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Colors.grey.shade200,
                                       border: Border.all(
                                         color: Colors.blue.shade100,
                                       ),
                                     ),
-                                    child: Row(
+                                    child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        // Ticket Text + Timestamp
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
+                                        // 🔹 TOP ROW (Title + Pending badge)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
                                                 ticket['text']!,
                                                 style: const TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 16,
+                                                  fontSize: 17,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                'Submitted: ${ticket['timestamp']}',
+                                            ),
+
+                                            // 🔸 Pending Badge (Top-right)
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 6,
+                                                    horizontal: 12,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.yellow.shade200,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                  color: Colors.yellow.shade300,
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                "Pending",
                                                 style: TextStyle(
-                                                  color: Colors.grey.shade600,
-                                                  fontSize: 12,
+                                                  color: Colors.brown,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
                                                 ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
 
-                                        // Pending status badge
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 6,
-                                            horizontal: 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.yellow.shade100,
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.yellow.shade300,
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            'Pending',
-                                            style: TextStyle(
-                                              color: Colors.brown,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                            ),
+                                        const SizedBox(height: 8),
+
+                                        // 🔹 Timestamp
+                                        Text(
+                                          "Submitted: ${ticket['timestamp']}",
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.grey.shade700,
                                           ),
                                         ),
                                       ],
@@ -263,24 +248,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               const SizedBox(height: 20),
 
-              // Submit New Ticket button (light blue with yellow text)
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: handleAddTicket,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlueAccent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              // BOTTOM BUTTONS
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  // Submit new ticket
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: handleAddTicket,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.lightBlueAccent,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Submit New Ticket",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    'Submit New Ticket',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ),
+
+                  const SizedBox(width: 16),
+
+                  // VIEW DETAILS BUTTON
+                  if (tickets.isNotEmpty)
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: goToTicketDescription,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlueAccent,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "View Ticket Details",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
