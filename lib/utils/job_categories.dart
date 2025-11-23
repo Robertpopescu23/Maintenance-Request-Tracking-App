@@ -1,0 +1,17 @@
+const jobCategories = [
+  "Cleaning",
+  "Plumbing",
+  "Electrical",
+  "Gardening",
+  "Moving Furniture",
+  "Polishing",
+  "Organizing",
+  "Bathroom Repairs",
+  "Kitchen Repairs",
+  "Appliance Repairs",
+  "Painting",
+  "Lawn Care",
+  "Tree Work",
+  "Fence Painting",
+  "Plant Care",
+];

@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'ticket_description.dart';
+
+import '../widgets/app_drawer.dart';
+import '../widgets/input_field.dart';
+import '../widgets/primary_button.dart';
+import '../widgets/ticket_card.dart';
+
+import '../services/ticket_service.dart';
+import '../models/ticket_model.dart';
+
+import '../utils/job_categories.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -10,287 +20,262 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final formKey = GlobalKey<FormState>();
+  final ticketController = TextEditingController();
+
   bool showInput = false;
-  final TextEditingController ticketController = TextEditingController();
+  bool submitting = false;
 
-  final List<Map<String, String>> tickets = [];
+  // Default category (lowercase normalized)
+  String selectedCategory = jobCategories.first.toLowerCase();
+  String filterCategory = "all"; // lowercase
 
-  void handleAddTicket() {
-    setState(() {
-      showInput = !showInput;
-    });
+  @override
+  void dispose() {
+    ticketController.dispose();
+    super.dispose();
   }
 
-  void handleSubmitTicket() {
-    final text = ticketController.text.trim();
-    if (text.isNotEmpty) {
-      final timestamp = DateFormat('dd MMM yyyy, HH:mm').format(DateTime.now());
-
-      setState(() {
-        tickets.add({'text': text, 'timestamp': timestamp});
-        ticketController.clear();
-        showInput = false;
-      });
-    }
+  void toggleInput() {
+    setState(() => showInput = !showInput);
   }
 
-  void goToTicketDescription() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TicketDescriptionScreen(tickets: tickets),
-      ),
+  /// Convert category to Title Case for UI
+  String toTitleCase(String text) {
+    return text
+        .split(" ")
+        .map((w) {
+          if (w.isEmpty) return "";
+          return w[0].toUpperCase() + w.substring(1).toLowerCase();
+        })
+        .join(" ");
+  }
+
+  Future<void> submitTicket() async {
+    if (!formKey.currentState!.validate()) return;
+
+    setState(() => submitting = true);
+
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final formattedTime = DateFormat(
+      "dd MMM yyyy, HH:mm",
+    ).format(DateTime.now());
+
+    final ticket = Ticket(
+      id: "",
+      text: ticketController.text.trim(),
+      timestamp: formattedTime,
+      userId: uid,
+      status: "pending",
+      category: selectedCategory.trim().toLowerCase(), // NORMALIZED CATEGORY
     );
+
+    await TicketService.addTicket(ticket);
+
+    setState(() {
+      submitting = false;
+      showInput = false;
+      ticketController.clear();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      drawer: const AppDrawer(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.blue),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const SizedBox(height: 20),
-
               const Text(
-                'Dashboard',
-                style: TextStyle(fontSize: 26, color: Colors.black),
-                textAlign: TextAlign.center,
+                "Dashboard",
+                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
-              // MAIN TICKET BOX
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 3),
+              // CATEGORY FILTER
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blue.shade100),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: DropdownButton<String>(
+                  value: filterCategory,
+                  isExpanded: true,
+                  underline: const SizedBox(),
+                  items: [
+                    const DropdownMenuItem(
+                      value: "all",
+                      child: Text("All Categories"),
+                    ),
+                    ...jobCategories.map(
+                      (cat) => DropdownMenuItem(
+                        value: cat.toLowerCase(),
+                        child: Text(toTitleCase(cat)),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // HEADER
-                      Container(
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'My Tickets',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: handleAddTicket,
-                              icon: const Icon(Icons.add, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // INPUT FIELD
-                      if (showInput)
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              TextField(
-                                controller: ticketController,
-                                decoration: InputDecoration(
-                                  hintText: "Enter your ticket",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Colors.blue,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              SizedBox(
-                                width: double.infinity,
-                                height: 45,
-                                child: ElevatedButton(
-                                  onPressed: handleSubmitTicket,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                  ),
-                                  child: const Text("Submit"),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                      // TICKET LIST DISPLAY
-                      Expanded(
-                        child: tickets.isEmpty
-                            ? Center(
-                                child: Text(
-                                  'No tickets yet',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              )
-                            : ListView.builder(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: tickets.length,
-                                itemBuilder: (context, index) {
-                                  final ticket = tickets[index];
-
-                                  return Container(
-                                    padding: const EdgeInsets.all(12),
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      color: Colors.grey.shade200,
-                                      border: Border.all(
-                                        color: Colors.blue.shade100,
-                                      ),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // 🔹 TOP ROW (Title + Pending badge)
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                ticket['text']!,
-                                                style: const TextStyle(
-                                                  fontSize: 17,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-
-                                            // 🔸 Pending Badge (Top-right)
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 6,
-                                                    horizontal: 12,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.yellow.shade200,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                border: Border.all(
-                                                  color: Colors.yellow.shade300,
-                                                ),
-                                              ),
-                                              child: const Text(
-                                                "Pending",
-                                                style: TextStyle(
-                                                  color: Colors.brown,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        const SizedBox(height: 8),
-
-                                        // 🔹 Timestamp
-                                        Text(
-                                          "Submitted: ${ticket['timestamp']}",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.grey.shade700,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    setState(() => filterCategory = val!);
+                  },
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // BOTTOM BUTTONS
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  // Submit new ticket
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: handleAddTicket,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.lightBlueAccent,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        "Submit New Ticket",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
+              Expanded(
+                child: StreamBuilder<List<Ticket>>(
+                  stream: TicketService.getTicketsByCategory(
+                    uid,
+                    filterCategory == "all"
+                        ? null
+                        : filterCategory.trim().toLowerCase(),
                   ),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.blue),
+                      );
+                    }
 
-                  const SizedBox(width: 16),
+                    final tickets = snapshot.data!;
 
-                  // VIEW DETAILS BUTTON
-                  if (tickets.isNotEmpty)
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: goToTicketDescription,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlueAccent,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    return ListView(
+                      children: [
+                        // MAIN CARD
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withValues(alpha: 0.1),
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              // HEADER
+                              Container(
+                                height: 60,
+                                decoration: const BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(16),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      child: Text(
+                                        "My Tickets",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: toggleInput,
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              if (showInput)
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Form(
+                                    key: formKey,
+                                    child: Column(
+                                      children: [
+                                        InputField(
+                                          label: "Describe your issue",
+                                          controller: ticketController,
+                                          validator: (v) =>
+                                              v == null || v.isEmpty
+                                              ? "Required"
+                                              : null,
+                                        ),
+
+                                        const SizedBox(height: 16),
+
+                                        // CATEGORY DROPDOWN (normalized)
+                                        DropdownButtonFormField<String>(
+                                          value: selectedCategory,
+                                          decoration: InputDecoration(
+                                            labelText: "Category",
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                          ),
+                                          items: jobCategories
+                                              .map(
+                                                (cat) => DropdownMenuItem(
+                                                  value: cat.toLowerCase(),
+                                                  child: Text(toTitleCase(cat)),
+                                                ),
+                                              )
+                                              .toList(),
+                                          onChanged: (v) {
+                                            setState(
+                                              () => selectedCategory = v!,
+                                            );
+                                          },
+                                        ),
+
+                                        const SizedBox(height: 16),
+
+                                        PrimaryButton(
+                                          label: "Submit Ticket",
+                                          loading: submitting,
+                                          onPressed: submitTicket,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                              // DISPLAY TICKETS
+                              ...tickets.map(
+                                (t) => TicketCard(
+                                  title:
+                                      "${t.text} (${toTitleCase(t.category)})",
+                                  timestamp: t.timestamp,
+                                  status: t.status,
+                                  onTap: null,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: const Text(
-                          "View Ticket Details",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                ],
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBSzhB3e-dGDnPGMYkZsHRZ9KpqypAucc4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>398935399770</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.maintenanceRequestApp</string>
+	<key>PROJECT_ID</key>
+	<string>mobile-app-fix</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mobile-app-fix.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:398935399770:ios:b46ec7b57730ae23012763</string>
+	<key>DATABASE_URL</key>
+	<string>https://mobile-app-fix-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "398935399770",
+    "firebase_url": "https://mobile-app-fix-default-rtdb.firebaseio.com",
+    "project_id": "mobile-app-fix",
+    "storage_bucket": "mobile-app-fix.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398935399770:android:931cfc00ef6187c0012763",
+        "android_client_info": {
+          "package_name": "com.example.maintenance_request_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDE-1HCJED2rLkH5x0ut3n38VVUdw2ojnw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

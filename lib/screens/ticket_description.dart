@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../widgets/app_drawer.dart';
+import '../models/ticket_model.dart';
 
 class TicketDescriptionScreen extends StatelessWidget {
-  final List<Map<String, String>> tickets;
+  final List<Ticket> tickets;
 
   const TicketDescriptionScreen({Key? key, required this.tickets})
     : super(key: key);
@@ -28,7 +30,7 @@ class TicketDescriptionScreen extends StatelessWidget {
     {'title': 'Plant watering and care', 'price': '\$10 - 12'},
   ];
 
-  // Finds the category based on ticket text matching the job title
+  // Finds the category based on ticket text
   String findCategory(String ticketName) {
     for (var job in jobCategories) {
       if (ticketName.toLowerCase().contains(job['title']!.toLowerCase())) {
@@ -57,20 +59,19 @@ class TicketDescriptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
+      drawer: const AppDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text("Ticket Details"),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-
         child: ListView.builder(
           itemCount: tickets.length,
           itemBuilder: (context, index) {
             final t = tickets[index];
-            final category = findCategory(t['text']!);
+            final category = findCategory(t.text);
             final priority = derivePriority(category);
 
             return Container(
@@ -86,7 +87,6 @@ class TicketDescriptionScreen extends StatelessWidget {
                   ),
                 ],
               ),
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -103,7 +103,7 @@ class TicketDescriptionScreen extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.all(12),
                     child: Text(
-                      t['text']!,
+                      t.text,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -227,11 +227,11 @@ class TicketDescriptionScreen extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // 🔹 Timestamp at bottom
+                  // 🔹 Timestamp at bottom (FIXED)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      "Submitted on: ${t['timestamp']}",
+                      "Submitted on: ${t.timestamp}",
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade700,
