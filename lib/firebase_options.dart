@@ -33,6 +33,7 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions web = FirebaseOptions(
 
     appId: '1:398935399770:web:c6fce9afedcb7b09012763',
+    //Deleted API key from Firebase
     messagingSenderId: '398935399770',
     projectId: 'mobile-app-fix',
     authDomain: 'mobile-app-fix.firebaseapp.com',
@@ -43,6 +44,7 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions android = FirebaseOptions(
 
     appId: '1:398935399770:android:931cfc00ef6187c0012763',
+    //Deleted API key from Firebase
     messagingSenderId: '398935399770',
     projectId: 'mobile-app-fix',
     databaseURL: 'https://mobile-app-fix-default-rtdb.firebaseio.com',
@@ -52,6 +54,7 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions ios = FirebaseOptions(
 
     appId: '1:398935399770:ios:b46ec7b57730ae23012763',
+    //Deleted API key from Firebase  
     messagingSenderId: '398935399770',
     projectId: 'mobile-app-fix',
     databaseURL: 'https://mobile-app-fix-default-rtdb.firebaseio.com',
@@ -62,6 +65,7 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions macos = FirebaseOptions(
 
     appId: '1:398935399770:ios:b46ec7b57730ae23012763',
+    //Deleted API key from Firebase
     messagingSenderId: '398935399770',
     projectId: 'mobile-app-fix',
     databaseURL: 'https://mobile-app-fix-default-rtdb.firebaseio.com',
@@ -72,6 +76,7 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions windows = FirebaseOptions(
 
     appId: '1:398935399770:web:7073373cedd379d7012763',
+    //Deleted API key from Firebase  
     messagingSenderId: '398935399770',
     projectId: 'mobile-app-fix',
     authDomain: 'mobile-app-fix.firebaseapp.com',
